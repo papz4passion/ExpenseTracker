@@ -12,7 +12,7 @@ import SwiftData
 struct ExpenseTrackerApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Item.self,
+            Expense.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
@@ -25,7 +25,7 @@ struct ExpenseTrackerApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ExpenseListView()
         }
         .modelContainer(sharedModelContainer)
     }
