@@ -57,6 +57,10 @@ import SwiftUI
 //}
 
 
+import SwiftUI
+import SwiftData
+import Foundation
+
 struct AddExpenseView: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
@@ -69,10 +73,11 @@ struct AddExpenseView: View {
     @State private var selectedDate: Date
     @State private var recurrence: RecurrenceInterval = .none
     @State private var selectedKakeiboTag: KakeiboTag = .needs
+    @State private var selectedModeOfPayment: ModeOfPayment = .cash // New state variable
     
-    init(defaultDate: Date) {
+    init(defaultDate: Date = Date()) {
         self.defaultDate = defaultDate
-        _selectedDate = State(initialValue: defaultDate) // Initialize selectedDate with defaultDate
+        _selectedDate = State(initialValue: defaultDate)
     }
     
     var body: some View {
@@ -101,9 +106,23 @@ struct AddExpenseView: View {
                 }
             }
             
+            Picker("Mode of Payment", selection: $selectedModeOfPayment) { // New picker
+                ForEach(ModeOfPayment.allCases, id: \.self) { mode in
+                    Text(mode.rawValue).tag(mode)
+                }
+            }
+            
             Button("Add Expense") {
                 if let expenseAmount = Double(amount) {
-                    let newExpense = Expense(title: title, amount: expenseAmount, date: selectedDate, category: selectedCategory, recurrence: recurrence, kakeiboTag: selectedKakeiboTag)
+                    let newExpense = Expense(
+                        title: title,
+                        amount: expenseAmount,
+                        date: selectedDate,
+                        category: selectedCategory,
+                        recurrence: recurrence,
+                        kakeiboTag: selectedKakeiboTag,
+                        modeOfPayment: selectedModeOfPayment
+                    )
                     context.insert(newExpense)
                     dismiss()
                 }
@@ -111,4 +130,8 @@ struct AddExpenseView: View {
         }
         .navigationTitle("Add Expense")
     }
+}
+
+#Preview {
+    AddExpenseView()
 }

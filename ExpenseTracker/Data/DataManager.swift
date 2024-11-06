@@ -40,17 +40,18 @@ class DataManager {
             let jsonData = try Data(contentsOf: url)
             let importedExpenses = try decoder.decode([Expense].self, from: jsonData)
             
-            // Insert imported expenses into SwiftData context
             Task {
                 for expense in importedExpenses {
-                    _ = Expense(
+                    let newExpense = Expense(
                         title: expense.title,
                         amount: expense.amount,
                         date: expense.date,
                         category: expense.category,
                         recurrence: expense.recurrence,
-                        kakeiboTag: expense.kakeiboTag
+                        kakeiboTag: expense.kakeiboTag,
+                        modeOfPayment: expense.modeOfPayment // Include modeOfPayment
                     )
+                    context.insert(newExpense)
                 }
                 try context.save()
                 completion(true)
